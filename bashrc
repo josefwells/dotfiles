@@ -49,6 +49,9 @@ export HISTSIZE=4095
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# Expand variables in paths when using completion.
+shopt -s direxpand
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
@@ -108,7 +111,7 @@ fi
 
 # some more ls aliases
 alias l='ls -ltrah'
-alias duh='du -hs *|sort -h'
+alias duh="ls -d .* *| grep -v ^..$| grep -v ^.$| parallel 'mountpoint -q -- {} || du -hsx {}'|sort -h"
 alias dirs='dirs -v'
 
 # Alias definitions.
@@ -143,7 +146,7 @@ fp  () {
     fi
 }
 #Docker
-docker-rmall () { docker rm `docker ps -a -q`; }
+docker-rmall () { docker stop `docker ps -a -q`; docker rm `docker ps -a -q`; }
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
