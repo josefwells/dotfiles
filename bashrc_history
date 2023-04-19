@@ -19,7 +19,7 @@
 # DESCRIPTION (NOTES):
 #   A script to be sourced from .bashrc to provide ways to archive all the
 #   actions in infinitely long history file.
-#   
+#
 #   To use, just place
 #     '[ -r ~/.bashrc_history ] && source ~/.bashrc_history' in ~/.bashrc
 #
@@ -39,8 +39,8 @@
 # SOURCE:
 #   http://www.onerussian.com/Linux/.files/.bashrc_history
 #
-# LICENSE:  
-#   Released under GNU Generic Public License. You should've received it with 
+# LICENSE:
+#   Released under GNU Generic Public License. You should've received it with
 #   your GNU/Linux system. If not, write to the Free Software Foundation, Inc.,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #-----------------\____________________________________/------------------
@@ -61,7 +61,10 @@ if [ "$PS1" ] ; then # interactive shell
         TFILE=${HISTFILE}.$$.temp
         CURTIME=`date '+%Y-%m-%d %H:%M:%S'`
 	CURTTY=`tty`
+	# If we don't have a tty, we are not interactive, don't save this
 	if [ "$CURTTY" == "not a tty" ]; then exit $rc; fi;
+	# If someone did an ssh -tt to force a tty, we want to know you are not login.
+	if ! shopt -q login_shell; then exit $rc; fi;
         #STAMP
         HISTORYDUMP=$(($HISTORYDUMP+1))
         # Title
@@ -73,7 +76,7 @@ if [ "$PS1" ] ; then # interactive shell
         which gawk >/dev/null \
          && awk '/^#[0-9]+$/{print strftime("#%F %T ", gensub(/#/,"","g")) }//' ${TFILE} >> ${HISTFILE}.archive \
          || cat ${TFILE} >> ${HISTFILE}.archive
-        
+
         # Adjust history file itself
         # of cause we need to dump to some temp file and then rename... he heh
         cat ${HISTFILE} ${TFILE} | tail -${HISTSIZE} >| ${HISTFILE}.$$
@@ -81,7 +84,7 @@ if [ "$PS1" ] ; then # interactive shell
         # clean up after yourself - to be absessive remove the other tmp file as well -
         # - might happen if there were no permission to move it at above point
         rm -rf ${TFILE} ${HISTFILE}.$$
-	exit $?
+	exit $rc
     }
 
     trap 'archive_history' EXIT HUP
