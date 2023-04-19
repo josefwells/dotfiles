@@ -1,0 +1,7 @@
+dotfiles_secure/
+emacs.d/auto-save-list/
+*.elc
+*~
+\#*\#
+.\#*
+eln-cache
