@@ -33,6 +33,7 @@ if [ "$TMUX" ]; then
 	return $_exitcode
     }
     #export PROMPT_COMMAND='tmux rename-window -t ${TMUX_PANE} ${HOSTNAME}:`basename ${PWD}`;'
+    unset PROMPT_COMMAND
 else
     export TERM=xterm-256color
     export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
