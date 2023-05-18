@@ -9,11 +9,14 @@
 
 dir=~/dotfiles                    # dotfiles directory
 sdir=~/dotfiles/dotfiles_secure   # secure directory
+wdir=~/dotfiles/dotfiles_work     # Work dir
 olddir=~/dotfiles_old             # old dotfiles backup directory
 # list of files/folders to symlink in homedir
 files="bashrc bashrc_history emacs emacs.d vnc cshrc pdbrc tmux.conf tmux"
 # files that might exist under dotfiles/dotfiles_secure
 securefiles="bashrc.secure bashrc.telegram bashrc.telegram_dale bashrc.telegram_cerfturingmonitor check_on_turing"
+# list of files/folders to symlink for work
+workfiles="bashrc.work emacs.work.el"
 
 ##########
 
@@ -52,3 +55,14 @@ for file in $securefiles; do
     ln -s $sdir/$file ~/.$file
 done
 
+# move any existing dotfiles in homedir to dotfiles_old directory, then
+# create symlinks from the homedir to any files in the ~/dotfiles directory specified in $files
+for file in $workfiles; do
+    if [ ! -e $wdir/$file ]; then
+	continue
+    fi
+    echo "Moving any existing dotfiles from ~ to $olddir"
+    mv ~/.$file ~/dotfiles_old/
+    echo "Creating symlink to $file in home directory."
+    ln -s $wdir/$file ~/.$file
+done
